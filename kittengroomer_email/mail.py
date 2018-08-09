@@ -544,15 +544,15 @@ class KittenGroomerMail(KittenGroomerMailBase):
             return self.pack_attachment(self.cur_attachment)
         else:
             to_keep, attachments, parsed_email = self.split_email(raw_email)
-            final_attach = set(attachments)
+            self.final_attach = set(attachments)
             for f in attachments:
                 self.process_payload(f)
                 # At this point, self.cur_attachment can be a list (if the original one was an archive)
                 if isinstance(self.cur_attachment, list):
-                    final_attach.discard(f)
-                    final_attach.update(self.cur_attachment)
+                    self.final_attach.discard(f)
+                    self.final_attach.update(self.cur_attachment)
                 else:
-                    final_attach.discard(f)
-                    final_attach.add(self.cur_attachment)
-            parsed_email = self.reassemble_mail(parsed_email, to_keep, final_attach)
+                    self.final_attach.discard(f)
+                    self.final_attach.add(self.cur_attachment)
+            parsed_email = self.reassemble_mail(parsed_email, to_keep, self.final_attach)
             return parsed_email
